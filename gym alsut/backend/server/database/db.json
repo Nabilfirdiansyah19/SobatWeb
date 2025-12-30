@@ -1,0 +1,27 @@
+{
+    "members": [
+        {
+            "id": "MEM1735541400000",
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "phone": "+62 812 3456 7890",
+            "membershipPlan": "performer",
+            "startDate": "2025-01-01T00:00:00.000Z",
+            "status": "active",
+            "createdAt": "2025-12-30T07:30:00.000Z"
+        }
+    ],
+    "contacts": [
+        {
+            "id": "CONTACT1735541400001",
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "phone": "+62 821 9876 5432",
+            "interest": "athlete",
+            "message": "Saya tertarik dengan paket Athlete. Bisa info lebih lanjut?",
+            "status": "new",
+            "submittedAt": "2025-12-30T08:15:00.000Z"
+        }
+    ],
+    "schedule": []
+}
