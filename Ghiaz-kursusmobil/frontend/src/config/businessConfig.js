@@ -1,14 +1,13 @@
 export const businessConfig = {
-  name: "Ghiaz Kursus Stir Mobil",
-  shortName: "GHIAZ",
-  tagline: "Belajar nyetir gak harus bikin stres!",
-  phone: "085216404330",
-  whatsapp: "https://wa.link/8zk4ql",
-  instagram: "https://www.instagram.com/ghiaz_kursusstirmobiltangerang/",
-  address: "Garden City Residence Blok i5 no 9 RT 02 RW 022 Gebang Raya, Periuk, Tangerang Kota, Banten 15131",
+  name: "SUIT PALACE",
+  tagline: "Elevate Your Look, Effortlessly ✨",
+  waLink: "https://api.whatsapp.com/send/?phone=6281237575168",
+  address: "Ruko Hampton Promenade, Blk. M No.17, Tangerang, Banten",
+  hours: "Tue-Sun: 10:00 - 18:00 (Mon: Appointment Only)",
   colors: {
-    primary: "#DC2626", // Red 600
-    secondary: "#000000",
-    dark: "#0F172A"
+    primary: "#2C1E12",   // Espresso (Deep Brown)
+    secondary: "#8D775F", // Taupe (Elegant Brown)
+    accent: "#D4C5B9",    // Warm Sand (Cream)
+    bg: "#F4F4F4"         // Soft Grey
   }
 };
