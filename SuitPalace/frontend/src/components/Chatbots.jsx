@@ -1,112 +1,179 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Phone, Bot } from 'lucide-react';
+import { X, Phone, Bot } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { businessConfig } from '../config/businessConfig';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true); // Untuk kontrol pesan sambutan
   const [messages, setMessages] = useState([
-    { role: 'bot', text: 'Welcome to Suit Palace. How may I assist you with your tailoring needs today?' }
+    { role: 'bot', text: 'Halo! Saya Palace Bot. Ada yang bisa saya bantu dengan kebutuhan jas Anda hari ini?' }
   ]);
   const chatEndRef = useRef(null);
 
   const qa = [
-    { q: 'How to book?', a: 'You can visit our boutique in Ruko Hampton (Tue-Sun) or schedule an appointment via WhatsApp for a private fitting.' },
-    { q: 'Rental Duration?', a: 'Our standard rental is for 3 days. Extensions are available upon request during your fitting session.' },
-    { q: 'Alterations?', a: 'Yes, we provide on-site minor alterations to ensure the suit fits your body silhouette perfectly.' }
+    { q: 'Cara Booking?', a: 'Kunjungi butik kami di Ruko Hampton atau hubungi WhatsApp kami untuk fitting privat.' },
+    { q: 'Durasi Sewa?', a: 'Standar sewa adalah 3 hari. Bisa diperpanjang saat sesi fitting.' },
+    { q: 'Ukuran Custom?', a: 'Ya, kami menyediakan jasa permak minor agar jas pas dengan bentuk tubuh Anda.' }
   ];
 
   const scrollToBottom = () => chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   useEffect(() => { scrollToBottom(); }, [messages, isTyping]);
 
+  // Sembunyikan tooltip setelah 8 detik agar tidak mengganggu
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTooltip(false), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleAsk = (item) => {
     if (isTyping) return;
-    
-    // User message
     setMessages(prev => [...prev, { role: 'user', text: item.q }]);
-    
-    // Start Loading
     setIsTyping(true);
-
-    // Simulate thinking delay
     setTimeout(() => {
-      setIsTyping(false);
       setMessages(prev => [...prev, { role: 'bot', text: item.a }]);
-    }, 1500); // 1.5 detik loading
+      setIsTyping(false);
+    }, 1000);
   };
 
   return (
-    <div className="fixed bottom-10 right-10 z-1000">
+    <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-9999 flex flex-col items-end">
+      
+      {/* WINDOW CHATBOT */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.95 }} 
-            animate={{ opacity: 1, y: 0, scale: 1 }} 
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-6 w-87.5 bg-white shadow-[0_30px_60px_rgba(0,0,0,0.2)] rounded-[2.5rem] border border-[#8D775F]/20 overflow-hidden"
+            initial={{ opacity: 0, y: 50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.8 }}
+            className="mb-6 w-[88vw] md:w-96 bg-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] overflow-hidden border border-white/20"
           >
-            <div className="bg-[#2C1E12] p-6 text-white flex justify-between items-center">
+            {/* Header */}
+            <div className="bg-[#2C1E12] p-5 md:p-6 text-white flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#8D775F] flex items-center justify-center"><Bot size={16}/></div>
-                <span className="font-black italic uppercase text-[10px] tracking-widest">Palace Concierge</span>
+                <div className="w-10 h-10 bg-[#8D775F] rounded-full flex items-center justify-center border border-white/20">
+                  <Bot size={20} />
+                </div>
+                <div>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">Palace Bot</h3>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                    <span className="text-[8px] text-white/50 uppercase font-bold tracking-widest">Available Now</span>
+                  </div>
+                </div>
               </div>
-              <button onClick={() => setIsOpen(false)}><X size={20}/></button>
+              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <X size={20} />
+              </button>
             </div>
 
-            <div className="h-80 overflow-y-auto p-6 space-y-4 bg-[#F4F4F4]/50">
-              {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-4 rounded-2xl text-[11px] font-bold leading-relaxed shadow-sm ${
-                    m.role === 'user' ? 'bg-[#2C1E12] text-white rounded-tr-none' : 'bg-white text-slate-600 border border-slate-100 rounded-tl-none'
+            {/* Chat Area */}
+            <div className="h-72 md:h-80 overflow-y-auto p-5 md:p-6 space-y-4 bg-slate-50/50 scrollbar-hide">
+              {messages.map((msg, i) => (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={i} className={`flex ${msg.role === 'bot' ? 'justify-start' : 'justify-end'}`}>
+                  <div className={`max-w-[85%] p-4 rounded-3xl text-[11px] font-medium leading-relaxed shadow-sm ${
+                    msg.role === 'bot' ? 'bg-white text-[#2C1E12] rounded-tl-none' : 'bg-[#8D775F] text-white rounded-tr-none'
                   }`}>
-                    {m.text}
+                    {msg.text}
                   </div>
-                </div>
+                </motion.div>
               ))}
-              
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm flex gap-1">
-                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-[#8D775F] rounded-full" />
-                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-[#8D775F] rounded-full" />
-                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-[#8D775F] rounded-full" />
-                  </div>
-                </div>
-              )}
+              {isTyping && <div className="text-[10px] text-slate-400 italic">Palace Bot sedang mengetik...</div>}
               <div ref={chatEndRef} />
             </div>
 
-            <div className="p-4 bg-white border-t border-slate-100 space-y-3">
+            {/* Actions */}
+            <div className="p-5 bg-white border-t border-slate-100 space-y-4">
               <div className="flex flex-wrap gap-2">
                 {qa.map((item, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => handleAsk(item)} 
-                    disabled={isTyping}
-                    className="text-[9px] font-black uppercase px-4 py-2 bg-[#F4F4F4] rounded-full hover:bg-[#8D775F] hover:text-white transition-all disabled:opacity-50"
-                  >
+                  <button key={i} onClick={() => handleAsk(item)} className="text-[9px] font-black uppercase px-4 py-2 bg-[#F4F4F4] rounded-full hover:bg-[#2C1E12] hover:text-white transition-all border border-slate-200">
                     {item.q}
                   </button>
                 ))}
               </div>
-              <a href={businessConfig.waLink} className="w-full bg-[#25D366] text-white py-3 rounded-xl font-black uppercase text-[10px] flex items-center justify-center gap-2 shadow-lg shadow-green-100 hover:scale-[1.02] transition-transform">
-                <Phone size={12} /> Live WhatsApp
+              <a href={businessConfig.waLink} className="w-full bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase text-[10px] flex items-center justify-center gap-2 shadow-lg hover:brightness-105 transition-all">
+                <Phone size={14} /> Hubungi WhatsApp
               </a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.button 
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(!isOpen)} 
-        className="w-20 h-20 bg-[#2C1E12] text-white rounded-[2.5rem] flex items-center justify-center shadow-2xl border-4 border-white relative"
+      {/* TRIGGER: THE MINI MONOLITH BOT */}
+      <motion.div 
+        className="relative group cursor-pointer flex flex-col items-center justify-center"
+        onClick={() => { setIsOpen(!isOpen); setShowTooltip(false); }}
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <MessageSquare size={30} />
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#8D775F] rounded-full border-2 border-white animate-pulse" />
-      </motion.button>
+        {/* TOOLTIP SAMBUTAN (Untuk memberitahu user ini Bot Pertanyaan) */}
+        <AnimatePresence>
+          {showTooltip && !isOpen && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.5, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              className="absolute -top-16 right-0 bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-2xl z-30 whitespace-nowrap"
+            >
+              <p className="text-[10px] font-black text-[#2C1E12] uppercase tracking-tighter">
+                Butuh Bantuan? <span className="text-[#8D775F]">Tanya Saya!</span>
+              </p>
+              {/* Panah Tooltip */}
+              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-r border-b border-slate-200 rotate-45"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Notifikasi Badge (Angka 1 merah berdenyut) */}
+        {!isOpen && (
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="absolute -top-2 -right-1 w-6 h-6 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white z-40 shadow-lg"
+            >
+              1
+            </motion.div>
+        )}
+
+        {/* Orbital Rings - Ukuran disesuaikan agar tetap terlihat di mobile */}
+        <motion.div 
+          animate={{ rotate: 360, rotateX: 75 }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          className="absolute w-20 h-20 md:w-24 md:h-24 border border-[#8D775F]/40 rounded-full"
+        />
+
+        {/* Robot Structure */}
+        <div className="relative flex flex-col items-center scale-90 md:scale-100">
+          {/* Kepala */}
+          <motion.div 
+            animate={{ rotateZ: [-5, 5, -5] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="w-10 h-8 bg-[#2C1E12] rounded-xl border-2 border-[#8D775F] flex items-center justify-center z-20 shadow-xl"
+          >
+            <div className="flex gap-1.5">
+              <motion.div animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-[0_0_8px_cyan]" />
+              <motion.div animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 2, delay: 0.2 }} className="w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-[0_0_8px_cyan]" />
+            </div>
+          </motion.div>
+
+          {/* Badan */}
+          <div className="w-12 h-14 bg-linear-to-b from-[#2C1E12] to-black rounded-2xl border-2 border-[#8D775F]/50 mt-1 z-10 shadow-2xl relative">
+            <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-0 bg-cyan-400/5" />
+          </div>
+
+          {/* Tangan Magnetis */}
+          <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -left-3 top-10 w-2 h-6 bg-[#2C1E12] border border-[#8D775F]/30 rounded-full" />
+          <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute -right-3 top-10 w-2 h-6 bg-[#2C1E12] border border-[#8D775F]/30 rounded-full" />
+        </div>
+
+        {/* Shadow */}
+        <motion.div 
+          animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="w-10 h-2 bg-black rounded-full blur-lg mt-4"
+        />
+      </motion.div>
     </div>
   );
 };
