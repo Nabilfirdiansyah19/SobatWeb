@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, Shirt, Scissors, Package, ShoppingCart, 
   Plus, Trash2, Edit, Calendar as CalendarIcon, Info, 
-  LogOut, Search, FileSpreadsheet, Printer, Menu, X 
+  LogOut, Search, FileSpreadsheet, Printer, Menu, X, Database
 } from 'lucide-react';
 
 const AdminDashboard = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('calendar');
   const [selectedDate, setSelectedDate] = useState(new Date().getDate());
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State untuk mobile menu
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [db] = useState({
     admin: [
@@ -49,6 +49,7 @@ const AdminDashboard = ({ onBack }) => {
       { id: 3, paket_id: 3, tgl_mulai_sewa: '2026-01-18', tgl_akhir_sewa: '2026-01-20', deskripsi_kustom: 'Sewa untuk acara kantor', status_pelunasan: 'Belum Bayar' }
     ]
   });
+
   const columns = {
     admin: ['id', 'username', 'password'],
     jas: ['id', 'nama', 'size', 'warna', 'stok', 'kondisi'],
@@ -84,7 +85,7 @@ const AdminDashboard = ({ onBack }) => {
       <div className="lg:hidden fixed top-6 right-6 z-[100] print:hidden">
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-3 bg-[#1A120B] text-white rounded-2xl shadow-xl"
+          className="p-3 bg-[#1A120B] text-white rounded-2xl shadow-xl active:scale-90 transition-transform"
         >
           {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -127,46 +128,43 @@ const AdminDashboard = ({ onBack }) => {
       {/* MAIN CONTENT */}
       <main className={`flex-1 transition-all duration-300 lg:ml-72 p-6 lg:p-12 w-full print:ml-0`}>
         {/* HEADER SECTION */}
-    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 print:hidden relative z-10">
-      <div className="mt-8 lg:mt-0">
-        <h2 className="text-3xl lg:text-5xl font-black uppercase italic tracking-tighter leading-none">
-          {activeTab === 'calendar' ? 'Jadwal' : 'Table'}_<span className="text-[#8D775F]">{activeTab}</span>
-        </h2>
-      </div>
-      
-      {activeTab !== 'calendar' && (
-        <div className="flex flex-row flex-wrap gap-2 items-center">
-          {/* Search Input Container */}
-          <div className="relative flex-grow min-w-[140px] md:flex-none">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={(e) => e.stopPropagation()} // Mencegah event bubbling
-              className="w-full md:w-48 bg-white border border-black/10 rounded-xl py-2.5 pl-9 pr-3 text-[11px] font-bold uppercase outline-none focus:border-[#8D775F] shadow-sm appearance-none"
-              style={{ fontSize: '16px' }} // Trik CSS agar iOS tidak auto-zoom saat fokus
-            />
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 print:hidden relative z-10">
+          <div className="mt-8 lg:mt-0">
+            <h2 className="text-3xl lg:text-5xl font-black uppercase italic tracking-tighter leading-none">
+              {activeTab === 'calendar' ? 'Jadwal' : 'Table'}_<span className="text-[#8D775F]">{activeTab}</span>
+            </h2>
           </div>
-
-          {/* Buttons Container */}
-          <div className="flex gap-2">
-            <button onClick={exportToExcel} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 active:scale-95 transition-all">
-              <FileSpreadsheet size={18} />
-            </button>
-            <button onClick={() => window.print()} className="p-2.5 bg-white border border-black/5 text-black rounded-xl shadow-sm hover:bg-gray-50 active:scale-95 transition-all">
-              <Printer size={18} />
-            </button>
-            <button className="bg-[#1A120B] text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
-              <Plus size={16} className="text-[#8D775F]" /> New
-            </button>
-          </div>
+          
+          {activeTab !== 'calendar' && (
+            <div className="flex flex-row flex-wrap gap-2 items-center">
+              <div className="relative flex-grow min-w-[140px] md:flex-none">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                <input 
+                  type="text" 
+                  placeholder="Search..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={(e) => e.stopPropagation()}
+                  className="w-full md:w-48 bg-white border border-black/10 rounded-xl py-2.5 pl-9 pr-3 text-[11px] font-bold uppercase outline-none focus:border-[#8D775F] shadow-sm appearance-none"
+                  style={{ fontSize: '16px' }} 
+                />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={exportToExcel} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 active:scale-95 transition-all">
+                  <FileSpreadsheet size={18} />
+                </button>
+                <button onClick={() => window.print()} className="p-2.5 bg-white border border-black/5 text-black rounded-xl shadow-sm hover:bg-gray-50 active:scale-95 transition-all">
+                  <Printer size={18} />
+                </button>
+                <button className="bg-[#1A120B] text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+                  <Plus size={16} className="text-[#8D775F]" /> New
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+
         {activeTab === 'calendar' ? (
-          /* RESPONSIVE CALENDAR GRID */
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-10">
             <div className="xl:col-span-2 bg-white p-6 lg:p-10 rounded-[2rem] lg:rounded-[3rem] shadow-xl border border-black/5 overflow-hidden">
               <div className="grid grid-cols-7 gap-1 lg:gap-4">
@@ -188,40 +186,86 @@ const AdminDashboard = ({ onBack }) => {
               </div>
             </div>
 
-            {/* DETAIL ORDER CARD */}
+            {/* DETAIL ORDER CARD - DIPERJELAS UNTUK DEMO */}
             <div className="w-full">
               <AnimatePresence mode="wait">
                 {currentOrder ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-[#1A120B] text-white p-8 rounded-[2rem] lg:rounded-[3rem] shadow-2xl relative overflow-hidden">
-                    <h4 className="text-xl lg:text-2xl font-black uppercase italic mb-6 leading-none">{currentPaket?.nama_paket}</h4>
-                    <div className="space-y-4 mb-2 text-[10px]">
-                      <div className="bg-white/5 p-4 rounded-2xl">
-                        <p className="text-gray-500 mb-1 uppercase font-bold">Periode</p>
-                        <p className="font-mono text-[11px]">{currentOrder.tgl_mulai_sewa} — {currentOrder.tgl_akhir_sewa}</p>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} 
+                    className="bg-[#1A120B] text-white p-8 rounded-[2rem] lg:rounded-[3rem] shadow-2xl relative overflow-hidden border border-white/5"
+                  >
+                    {/* Badge Status */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="bg-[#8D775F]/20 px-3 py-1 rounded-full border border-[#8D775F]/30">
+                        <p className="text-[8px] font-black uppercase text-[#8D775F] tracking-widest">Order Details</p>
                       </div>
-                      <div className="bg-white/5 p-4 rounded-2xl">
-                        <p className="text-gray-500 mb-1 uppercase font-bold">Catatan</p>
-                        <p className="italic opacity-80 leading-relaxed text-[10px]">"{currentOrder.deskripsi_kustom}"</p>
-                      </div>
-                    </div>
-                    <div className="pt-6 mt-4 border-t border-white/10 flex items-center justify-between">
-                      <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${currentOrder.status_pelunasan === 'Lunas' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
+                      <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${currentOrder.status_pelunasan === 'Lunas' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
                         {currentOrder.status_pelunasan}
                       </span>
                     </div>
+
+                    <h4 className="text-xl lg:text-2xl font-black uppercase italic mb-6 leading-none tracking-tight">{currentPaket?.nama_paket}</h4>
+                    
+                    <div className="space-y-4 mb-6">
+                      {/* Periode Info */}
+                      <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
+                        <CalendarIcon size={16} className="text-[#8D775F]" />
+                        <div>
+                          <p className="text-[8px] text-gray-500 uppercase font-black mb-0.5">Rental Period</p>
+                          <p className="font-mono text-[11px] font-bold text-gray-200 uppercase tracking-tighter">{currentOrder.tgl_mulai_sewa} — {currentOrder.tgl_akhir_sewa}</p>
+                        </div>
+                      </div>
+
+                      {/* Items Included */}
+                      <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                        <p className="text-[8px] text-gray-500 uppercase font-black mb-3 tracking-widest flex items-center gap-2">
+                          <Package size={12} className="text-[#8D775F]"/> Included Items
+                        </p>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-[10px] font-bold">
+                            <span className="flex items-center gap-2 text-gray-400"><Shirt size={12}/> Suit</span>
+                            <span className="text-white uppercase tracking-tighter">ID_{currentPaket?.jas_id}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] font-bold">
+                            <span className="flex items-center gap-2 text-gray-400"><Scissors size={12}/> Shirt</span>
+                            <span className="text-white uppercase tracking-tighter">ID_{currentPaket?.kemeja_id}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] font-bold">
+                            <span className="flex items-center gap-2 text-gray-400"><Database size={12}/> Trousers</span>
+                            <span className="text-white uppercase tracking-tighter">ID_{currentPaket?.celana_id}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Notes Section */}
+                      <div className="bg-[#8D775F]/10 p-5 rounded-2xl border border-[#8D775F]/20">
+                        <p className="text-[8px] text-[#8D775F] uppercase font-black mb-2 flex items-center gap-2"><Info size={12}/> Custom Notes</p>
+                        <p className="italic opacity-90 leading-relaxed text-[10px] font-medium text-gray-300 italic font-serif">
+                          "{currentOrder.deskripsi_kustom}"
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Total Price Estimate */}
+                    <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+                       <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Package Price</span>
+                       <span className="text-xl font-black italic text-[#8D775F]">Rp {currentPaket?.harga_paket.toLocaleString()}</span>
+                    </div>
                   </motion.div>
                 ) : (
-                  <div className="bg-white p-8 lg:p-10 rounded-[2rem] lg:rounded-[3rem] border border-dashed border-gray-200 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    Pilih tanggal booking
+                  <div className="bg-white p-12 lg:p-16 rounded-[2rem] lg:rounded-[3rem] border border-dashed border-gray-200 text-center flex flex-col items-center justify-center space-y-4">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-200">
+                      <CalendarIcon size={32} />
+                    </div>
+                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Select Date <br/> to View Details</p>
                   </div>
                 )}
               </AnimatePresence>
             </div>
           </div>
         ) : (
-          /* RESPONSIVE TABLE (Desktop: Table, Mobile: Cards) */
+          /* RESPONSIVE TABLE */
           <div className="w-full">
-            {/* TAMPILAN DESKTOP (TABLE) */}
             <div className="hidden md:block bg-white rounded-[2rem] lg:rounded-[3rem] shadow-xl border border-black/5 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -254,7 +298,6 @@ const AdminDashboard = ({ onBack }) => {
               </div>
             </div>
 
-            {/* TAMPILAN MOBILE (CARDS) */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
               {filteredData.map((row, idx) => (
                 <div key={idx} className="bg-white p-6 rounded-3xl shadow-md border border-black/5">
@@ -282,12 +325,8 @@ const AdminDashboard = ({ onBack }) => {
         )}
       </main>
 
-      {/* OVERLAY UNTUK SIDEBAR MOBILE */}
       {isSidebarOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[80]"
-          onClick={() => setIsSidebarOpen(false)}
-        />
+        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[80]" onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>
   );
