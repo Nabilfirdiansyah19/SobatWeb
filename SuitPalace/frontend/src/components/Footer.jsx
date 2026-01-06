@@ -8,7 +8,7 @@ const Footer = ({ onAdminClick }) => {
   return (
     <footer className="bg-[#2C1E12] py-24 relative overflow-hidden text-[#D4C5B9]">
       {/* Garis Dekoratif Atas */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8D775F] to-transparent opacity-30" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#8D775F] to-transparent opacity-30" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-12 gap-16 mb-20">
