@@ -6,7 +6,7 @@ import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbots';
-import Preloader from './components/p';
+import Preloader from './components/Preloader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useEffect } from 'react';
